@@ -1,0 +1,19 @@
+docker build -t samsonm/storage_api:0.0.2 -f src/docker/Dockerfile .
+docker tag samsonm/storage_api:0.0.2 samsonm/storage_api:0.0.2-release
+docker push samsonm/storage_api:0.0.2-release
+
+
+
+kubectl create namespace sre
+
+kubectl create -f clusterRole.yaml
+
+kubectl create -f prometheus-config-map.yaml
+kubectl create -f ge-config-map.yaml
+
+kubectl create -f prometheus-deployment.yaml
+kubectl create -f prometheus-service.yaml
+
+kubectl create -f grafana.yaml
+
+kubectl create -f storage_api.yaml

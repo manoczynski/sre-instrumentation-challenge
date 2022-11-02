@@ -1,0 +1,16 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+alerting:
+  alertmanagers:
+    - static_configs:
+      - targets:
+        - alertmanager_sre:9093
+
+scrape_configs:
+  - job_name: storage_api
+    scrape_interval: 10s
+    static_configs:
+      - targets:
+        - storage_api:5000

@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment 
+metadata: #Dictionary
+  name: storage-api-deployment
+  namespace: sre
+  labels:
+      component: backend
+      instance: app
+      name: storage_api
+spec: # Dictionary
+  replicas: 1
+  selector:
+    matchLabels:
+      component: backend
+      instance: app
+      name: storage_api
+  template:  
+    metadata: # Dictionary
+      name: storage_api-pod
+      labels: # Dictionary
+        component: backend
+        instance: app
+        name: storage_api
+    spec:
+      containers: # List
+        - name: storage-api-container
+          image: samsonm/storage_api:0.0.2-release
+          ports: 
+            - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata: 
+  name: storage-api-service
+  namespace: sre
+  labels:
+    component: backend
+    instance: app
+    name: storage_api
+spec:
+  type: NodePort
+  selector:
+    component: backend
+    instance: app
+    name: storage_api
+  ports:
+    - name: http
+      port: 5000
+      targetPort: 5000
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: storage-api
+  labels:
+    component: backend
+    instance: app
+    name: storage_api
+    release: prom
+  namespace: sre
+spec:
+  namespaceSelector:
+    matchNames:
+    - sre
+  selector:
+    matchLabels:
+      component: backend
+      instance: app
+      name: storage_api
+  endpoints:
+  - port: http
